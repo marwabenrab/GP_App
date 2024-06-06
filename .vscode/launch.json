@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "Flutter (lib\\screens\\land_list.dart)",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib\\screens\\land_list.dart"
+        }
+    ]
+}
