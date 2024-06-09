@@ -23,7 +23,7 @@ class _farmer_listState extends State<farmer_list> {
 
   Future<void> _fetchData() async {
     try {
-      var url = "https://192.168.1.6/falahphp/auth/Get_farmer.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/Get_farmer.php";
       var response = await http.post(Uri.parse(url));
 
       if (response.statusCode == 200) {
@@ -41,7 +41,7 @@ class _farmer_listState extends State<farmer_list> {
 
   Future<void> _deleteItemFromDatabase(int index) async {
     try {
-      var url = "https://192.168.1.6/falahphp/auth/Delet_Farmer.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/Delet_Farmer.php";
       var response = await http.post(
         Uri.parse(url),
         body: {

@@ -24,7 +24,7 @@ class _Complaint_listState extends State<Complaint_list> {
 
   Future<void> _fetchData() async {
     try {
-      var url = "https://192.168.1.6/falahphp/auth/Get_complaint.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/Get_complaint.php";
       var response = await http.post(Uri.parse(url));
 
       if (response.statusCode == 200) {
@@ -42,7 +42,7 @@ class _Complaint_listState extends State<Complaint_list> {
 
   Future<void> _deleteItemFromDatabase(int index) async {
     try {
-      var url = "https://192.168.1.6/falahphp/auth/Delet_complaint.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/Delet_complaint.php";
       var response = await http.post(
         Uri.parse(url),
         body: {
@@ -168,7 +168,7 @@ class _Complaint_listState extends State<Complaint_list> {
                         onPressed: () {
                           _showImage(
                               context,
-                              "https://192.168.1.6/falahphp/auth/" +
+                              "http://10.0.2.2:80/falahphp/auth/" +
                                   data['image']);
                         },
                         style: ElevatedButton.styleFrom(

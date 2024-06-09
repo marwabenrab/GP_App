@@ -23,11 +23,11 @@ class _singupcreenState extends State<singupscreen> {
 
   final _formKey = GlobalKey<FormState>();
 //192.168.115.174
-//https://192.168.1.6/falahphp/
+//http://10.0.2.2:80/falahphp/
 //192.168.58.220
   Future register() async {
     if (_formKey.currentState!.validate()) {
-      var url = "https://192.168.1.6/falahphp/auth/singup.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/singup.php";
       var response = await http.post(
         Uri.parse(url),
         body: {
@@ -256,7 +256,7 @@ class _singupcreenState extends State<singupscreen> {
   TextEditingController phone = TextEditingController();
 
   Future register() async {
-    var url = "https://192.168.1.6/falahphp/auth/singup.php";
+    var url = "http://10.0.2.2:80/falahphp/auth/singup.php";
     var response = await http.post(
       Uri.parse(url),
       body: {

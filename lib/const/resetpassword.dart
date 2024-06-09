@@ -79,7 +79,7 @@ class _ResetPasswordState extends State<ResetPassword> {
               onPressed: () async {
                 if (passCont.text == repPassCont.text) {
                   log(password);
-                  var url = "https://192.168.1.6/falahphp/auth/password.php";
+                  var url = "http://10.0.2.2:80/falahphp/auth/password.php";
                   var response = await http.put(Uri.parse(url),
                       body: {"email": glopalEmail, "password": passCont.text});
                   log(response.body);

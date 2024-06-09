@@ -1,26 +1,123 @@
+import 'package:fikra_app/const/home_const.dart';
 import 'package:fikra_app/constants.dart';
+import 'package:fikra_app/screen/homescreen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../AppProvider.dart';
+
+// تعريف النموذج الأساسي للمنتج
+class Product {
+  final String image, title, subTitle;
+  final int id;
+
+  Product({
+    required this.image,
+    required this.title,
+    required this.subTitle,
+    required this.id,
+  });
+}
+
+// بيانات منتجات تجريبية
+List<Product> demoProducts = [
+  Product(
+    image: 'assets/images/product1.png',
+    title: 'Product 1',
+    subTitle: 'This is product 1',
+    id: 2,
+  ),
+  Product(
+    image: 'assets/images/product2.png',
+    title: 'Product 2',
+    subTitle: 'This is product 2',
+    id: 3,
+  ),
+  Product(
+    image: 'assets/images/product1.png',
+    title: 'Product 3',
+    subTitle: 'This is product 3',
+    id: 4,
+  ),
+  Product(
+    image: 'assets/images/product2.png',
+    title: 'Product 4',
+    subTitle: 'This is product 4',
+    id: 5,
+  ),
+  Product(
+    image: 'assets/images/product1.png',
+    title: 'Product 5',
+    subTitle: 'This is product 5',
+    id: 6,
+  ),
+  Product(
+    image: 'assets/images/product2.png',
+    title: 'Product 6',
+    subTitle: 'This is product 6',
+    id: 7,
+  ),
+  Product(
+    image: 'assets/images/product1.png',
+    title: 'Product 7',
+    subTitle: 'This is product 7',
+    id: 8,
+  ),
+  Product(
+    image: 'assets/images/product2.png',
+    title: 'Product 8',
+    subTitle: 'This is product 8',
+    id: 9,
+  ),
+  Product(
+    image: 'assets/images/product1.png',
+    title: 'Product 9',
+    subTitle: 'This is product 9',
+    id: 10,
+  ),
+  // يمكنك إضافة منتجات أخرى هنا
+];
+
+// متغير لتخزين اسم المنتج المختار
 String name = '';
+int selected_index = 0;
+
+class ProductBody extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: Provider.of<AppProvider>(context).products.length,
+      itemBuilder: (context, index) {
+        return ProductTwo(
+          itemIndex: index,
+          product: Provider.of<AppProvider>(context).products[index],
+        );
+      },
+    );
+  }
+}
 
 class ProductTwo extends StatefulWidget {
-  ProductTwo({
+  const ProductTwo({
     required this.itemIndex,
+    required this.product,
     Key? key,
   }) : super(key: key);
 
   final int itemIndex;
+  final Map product;
 
   @override
-  State<ProductTwo> createState() => _ProductTwoState();
+  _ProductTwoState createState() => _ProductTwoState();
 }
 
 class _ProductTwoState extends State<ProductTwo> {
-  String? selectedProduct;
+  Map? _selectedProduct;
 
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
+
     return Container(
       margin: const EdgeInsets.symmetric(
         horizontal: kDefaultPadding,
@@ -40,68 +137,86 @@ class _ProductTwoState extends State<ProductTwo> {
                   offset: Offset(0, 15),
                   blurRadius: 25,
                   color: Colors.black12,
-                )
+                ),
               ],
             ),
           ),
-          Positioned(
-            top: 0,
-            left: 0,
+          Align(
+            alignment: Alignment.topLeft,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
               height: 160,
-              width: 200,
+              width: 150,
               child: const Icon(
-                Icons.image,
-                size: 100,
-                color: Colors.grey,
+                Icons.image, // استخدام الأيقونة
+                size: 100, // تحديد الحجم
+                color: Colors.grey, // تحديد اللون
               ),
             ),
           ),
-          Positioned(
-            bottom: 0.0,
-            right: 0.0,
+          Align(
+            alignment: Alignment.bottomRight,
             child: SizedBox(
               height: 136.0,
-              width: size.width - 200,
+              width: size.width - 180,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  const Spacer(),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-                    child: DropdownButton<String>(
-                      value: selectedProduct,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      onChanged: (String? newValue) {
-                        setState(() {
-                          selectedProduct = newValue;
-                        });
-                      },
-                      items: <String>['Product 1', 'Product 2', 'Product 3'].map((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: kDefaultPadding,
+                    ),
+                    child: DropdownButton<Map>(
+                      hint: const Text('Select Product'),
+                      value: _selectedProduct,
+                      items: Provider.of<AppProvider>(context)
+                          .products
+                          .map((Map product) {
+                        return DropdownMenuItem<Map>(
+                          value: product,
+                          child: Text(product['name'] ?? " "),
                         );
                       }).toList(),
+                      onChanged: (Map? newValue) {
+                        setState(() {
+                          _selectedProduct = newValue;
+                        });
+                      },
                     ),
                   ),
+                  const Spacer(),
                   Padding(
-                    padding: const EdgeInsets.all(kDefaultPadding),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: kDefaultPadding,
+                    ),
+                    child: Text(
+                      widget.product['subtitle'] ?? "Good Product",
+                      style: TextStyle(
+                        fontSize: 10.0,
+                        color: Colors.green[900],
+                        fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                  const Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.all(5),
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: selectedProduct != null
-                            ? const Color.fromARGB(255, 0, 123, 255) // لون الزر عند تفعيل المنتج
-                            : const Color.fromARGB(255, 200, 200, 200), // لون الزر عند عدم تفعيل المنتج
+                        backgroundColor: Colors.white,
                       ),
-                      onPressed: selectedProduct != null ? () {
-                        // Action when "See more" is pressed
-                      } : null,
-                      child: const Text(
-                        'See more',
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
+                      onPressed: _selectedProduct == null
+                          ? null
+                          : () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      Homeconst(), // تمرير HomeScreen كمعامل
+                                ),
+                              );
+                            },
+                      child: const Text('see more'),
                     ),
                   ),
                 ],
@@ -113,156 +228,3 @@ class _ProductTwoState extends State<ProductTwo> {
     );
   }
 }
-
-class MyWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        title: const Text('Appropriate products'),
-        backgroundColor: Colors.green, // تغيير لون خلفية شريط التطبيق إلى الأخضر
-        actions: const [
-          Icon(Icons.add_location),
-        ],
-      ),
-      body: ProductTwo(
-        itemIndex: 0,
-      ),
-    );
-  }
-}
-
-
-
-
-/*import 'package:fikra_app/constants.dart';
-import 'package:flutter/material.dart';
-
-
-String name = '';
-
-class ProductTwo extends StatefulWidget {
-  ProductTwo({
-    required this.itemIndex,
-   
-    Key? key,
-  }) : super(key: key);
-
-  final int itemIndex;
- // final List<String> productList;
-
-  @override
-  State<ProductTwo> createState() => _ProductTwoState();
-}
-
-class _ProductTwoState extends State<ProductTwo> {
-  String? selectedProduct; // قم بتعيين القيمة الافتراضية إلى null بدلاً من فارغة
-
-  @override
-  Widget build(BuildContext context) {
-     Size size = MediaQuery.of(context).size;
-    return Container(
-      margin: const EdgeInsets.symmetric(
-        horizontal: kDefaultPadding,
-        vertical: kDefaultPadding / 2,
-      ),
-      height: 190,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Container(
-            height: 166,
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(22),
-                color: Colors.white,
-                boxShadow: const [
-                  BoxShadow(
-                    offset: Offset(0, 15),
-                    blurRadius: 25,
-                    color: Colors.black12,
-                  )
-                ]),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: kDefaultPadding),
-              height: 160,
-              width: 200,
-              child: ClipOval(
-              //  child: Image.asset(
-                //  product.image,
-             //     fit: BoxFit.cover,
-                //),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: 0.0,
-            right: 0.0,
-            child: SizedBox(
-              height: 136.0,
-              // because oure image is 200 width, then -200
-              width: size.width - 200,
-              child: Column(
-                  // crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: kDefaultPadding),
-                     /* child: Text(
-                        product.title,
-                        style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.green[900],
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),*/
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: kDefaultPadding),
-                    /*  child: Text(
-                        product.subTitle,
-                        style: TextStyle(
-                          fontSize: 10.0,
-                          color: Colors.green[900],
-                          fontWeight: FontWeight.normal,
-                        ),
-                      ),*/
-                    ),
-                    const Spacer(),
-                    Padding(
-                      padding: const EdgeInsets.all(kDefaultPadding),
-                      child: Container(
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 255, 255)),
-                          onPressed: () {
-                          //  name = product.title;
-                           // Navigator.pushNamed(
-                              //context,
-                            //  Homeconst.screenRoute,
-                           // );
-                            //selected_index = product.id - 1;
-                          },
-                          child: const Text('see more'),
-                        ),
-                      ),
-                      //
-                    ),
-                  ]),
-            ),
-          )
-        ],
-      ),
-    );
-  }
-}*/
-
-

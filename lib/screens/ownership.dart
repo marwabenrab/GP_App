@@ -83,7 +83,7 @@ class _OwnershipState extends State<Ownership> {
     }
 
     try {
-      var url = "https://192.168.1.6/falahphp/auth/complaint.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/complaint.php";
       var request = http.MultipartRequest('POST', Uri.parse(url));
       request.fields['name'] = name;
       request.fields['number'] = number;

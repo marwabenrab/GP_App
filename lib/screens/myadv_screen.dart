@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'package:fikra_app/constants.dart';
 import 'package:fikra_app/controllers/user_session_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -27,16 +29,18 @@ class _Myadv_listState extends State<MyadvScreen> {
   Future<void> _fetchData() async {
     try {
       UserSessionController user = Get.find();
-      var url = "https://192.168.1.6/falahphp/auth/Get_land.php";
-      var response = await http.post(Uri.parse(url), body: {'idFrmer': "3"});
+      var url = "http://10.0.2.2:80/falahphp/auth/Get_land.php";
+      var response = await http
+          .post(Uri.parse(url), body: {'idFrmer': userData['id_Farmer']});
       print(
           "///////////////////////////////////////////////////////////////////");
       if (response.statusCode == 200) {
-        print(jsonDecode(response.body));
+        log(response.body);
         setState(() {
           _data = jsonDecode(response.body);
         });
       } else {
+        log(response.body);
         throw Exception('فشل في تحميل البيانات');
       }
     } catch (error) {
@@ -46,7 +50,7 @@ class _Myadv_listState extends State<MyadvScreen> {
 
   Future<void> _deleteItemFromDatabase(int index) async {
     try {
-      var url = "https://192.168.1.6/falahphp/auth/Delet_land.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/Delet_land.php";
       var response = await http.post(
         Uri.parse(url),
         body: {
@@ -205,7 +209,7 @@ class _Myadv_listState extends State<MyadvScreen> {
                           onPressed: () {
                             _showImage(
                                 context,
-                                "https://192.168.1.6/falahphp/auth/" +
+                                "http://10.0.2.2:80/falahphp/auth/" +
                                     data['image_own']);
                           },
                           style: ElevatedButton.styleFrom(
@@ -219,7 +223,7 @@ class _Myadv_listState extends State<MyadvScreen> {
                           onPressed: () {
                             _showImage(
                                 context,
-                                "https://192.168.1.6/falahphp/auth/" +
+                                "http://10.0.2.2:80/falahphp/auth/" +
                                     data['image_payment']);
                           },
                           style: ElevatedButton.styleFrom(
@@ -347,7 +351,7 @@ class _Land_listState extends State<Land_list> {
 
   Future<void> _fetchData() async {
     try {
-      var url = "https://192.168.1.6/falahphp/auth/Get_land.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/Get_land.php";
       var response = await http.post(Uri.parse(url));
 
       if (response.statusCode == 200) {
@@ -364,7 +368,7 @@ class _Land_listState extends State<Land_list> {
 
   Future<void> _deleteItemFromDatabase(int index) async {
     try {
-      var url = "https://192.168.1.6/falahphp/auth/Delet_land.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/Delet_land.php";
       var response = await http.post(
         Uri.parse(url),
         body: {
@@ -543,7 +547,7 @@ class _Land_listState extends State<Land_list> {
                           onPressed: () {
                             _showImage(
                                 context,
-                                "https://192.168.1.6/falahphp/auth/" +
+                                "http://10.0.2.2:80/falahphp/auth/" +
                                     data['image_own']);
                           },
                           style: ElevatedButton.styleFrom(
@@ -557,7 +561,7 @@ class _Land_listState extends State<Land_list> {
                           onPressed: () {
                             _showImage(
                                 context,
-                                "https://192.168.1.6/falahphp/auth/" +
+                                "http://10.0.2.2:80/falahphp/auth/" +
                                     data['image_payment']);
                           },
                           style: ElevatedButton.styleFrom(

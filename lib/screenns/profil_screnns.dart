@@ -1,9 +1,13 @@
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
+import 'package:fikra_app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 
 class Profilscrenns extends StatefulWidget {
   static const String screenRoute = 'profil_screnns';
@@ -12,10 +16,10 @@ class Profilscrenns extends StatefulWidget {
 }
 
 class _ProfilscrennsState extends State<Profilscrenns> {
-  String _name = 'Mohamed';
-  String _phone = '0667889043';
-  String _email = 'mohamed@gmail.com';
-  String _address = 'Ain defla';
+  String _name = userData['user_name'] ?? "";
+  String _phone = userData['phone'] ?? "";
+  String _email = userData['email'] ?? "";
+  String _address = userData['adress'] ?? "";
   File? _imageFile;
   final ImagePicker _picker = ImagePicker();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -146,24 +150,29 @@ class _ProfilscrennsState extends State<Profilscrenns> {
               child: Text('Cancel'),
             ),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 setState(() {
                   switch (infoType) {
-                    case 'User':
+                    case 'Name':
                       _name = newValue;
                       break;
+
                     case 'phone':
                       _phone = newValue;
                       break;
+
                     case 'Email':
                       _email = newValue;
-
                       break;
+
                     case 'Address':
                       _address = newValue;
                       break;
                   }
                 });
+                log(newValue);
+                await updateUserInfo();
+
                 Navigator.of(context).pop();
               },
               child: Text('Save'.tr),
@@ -172,6 +181,25 @@ class _ProfilscrennsState extends State<Profilscrenns> {
         );
       },
     );
+  }
+
+  Future<void> updateUserInfo() async {
+    log(jsonEncode(<String, dynamic>{
+      "id_Farmer": int.parse(userData['id_Farmer']),
+      "name": _name,
+      "email": _email,
+      "phone": _phone
+    }));
+    final res = await http
+        .post(Uri.parse("http://10.0.2.2:80/falahphp/auth/update_user.php"),
+            // headers: {'Content-Type': 'application/json'},
+            body: {
+          "id_Farmer": userData['id_Farmer'],
+          "name": _name,
+          "email": _email,
+          "phone": _phone
+        });
+    log(res.body);
   }
 
   Future<void> _pickImageFromGallery() async {
@@ -199,4 +227,3 @@ class _ProfilscrennsState extends State<Profilscrenns> {
     }
   }
 }
-

@@ -1,6 +1,10 @@
+import 'dart:developer';
+
+import 'package:fikra_app/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:http/http.dart' as http;
 
 class AddInfo extends StatefulWidget {
   static const String screenRoute = 'add_info';
@@ -12,19 +16,24 @@ class AddInfo extends StatefulWidget {
 
 class _AddInfoState extends State<AddInfo> {
   File? _image;
-  String _address = '***'; // القيم الافتراضية للعنوان
+  String _address = selectedLand["adress"] ?? ""; // القيم الافتراضية للعنوان
   String _space = '*** Hectar'; // القيم الافتراضية للمساحة
-  String _phoneNumber = '+213 123 123 123'; // القيم الافتراضية لرقم الهاتف
+  String _phoneNumber =
+      selectedLand['phone'] ?? ""; // القيم الافتراضية لرقم الهاتف
   String _rentalPrice = '*** DA'; // القيم الافتراضية لسعر الإيجار
 
   @override
   void initState() {
+    log(selectedLand["adress"].toString());
+    log(selectedLand["phone"].toString());
+    log(selectedLand["id_Land"].toString());
     super.initState();
     // تحميل الصورة مرة أخرى إذا كانت متاحة
     // يمكنك استخدام الحالة النهائية هنا لتحديث _image
   }
 
-  Future<void> _editText(BuildContext context, String title, String value) async {
+  Future<void> _editText(
+      BuildContext context, String title, String value) async {
     String? newValue = await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -40,7 +49,8 @@ class _AddInfoState extends State<AddInfo> {
           actions: <Widget>[
             TextButton(
               onPressed: () {
-                Navigator.of(context).pop(tempValue); // إغلاق الحوار وإرجاع القيمة المحدثة
+                Navigator.of(context)
+                    .pop(tempValue); // إغلاق الحوار وإرجاع القيمة المحدثة
               },
               child: Text('Save'),
             ),
@@ -74,6 +84,15 @@ class _AddInfoState extends State<AddInfo> {
         }
       });
     }
+    log(_address);
+    final res = await http.post(
+        Uri.parse("http://10.0.2.2:80/falahphp/auth/update_land.php"),
+        body: {
+          'id_Land': selectedLand['id_Land'],
+          'phone': _phoneNumber,
+          'adress': _address
+        });
+    log(res.body);
   }
 
   Future<void> _pickImage() async {
@@ -148,7 +167,8 @@ class _AddInfoState extends State<AddInfo> {
                   title: 'Address',
                   text: _address,
                   onTap: () {
-                    _editText(context, 'Address', _address); // فتح حوار التحرير عند الضغط
+                    _editText(context, 'Address',
+                        _address); // فتح حوار التحرير عند الضغط
                   },
                 ),
                 const SizedBox(height: 20),
@@ -156,7 +176,8 @@ class _AddInfoState extends State<AddInfo> {
                   title: 'Space',
                   text: _space,
                   onTap: () {
-                    _editText(context, 'Space', _space); // فتح حوار التحرير عند الضغط
+                    _editText(
+                        context, 'Space', _space); // فتح حوار التحرير عند الضغط
                   },
                 ),
                 const SizedBox(height: 20),
@@ -164,7 +185,8 @@ class _AddInfoState extends State<AddInfo> {
                   title: 'Phone Number',
                   text: _phoneNumber,
                   onTap: () {
-                    _editText(context, 'Phone Number', _phoneNumber); // فتح حوار التحرير عند الضغط
+                    _editText(context, 'Phone Number',
+                        _phoneNumber); // فتح حوار التحرير عند الضغط
                   },
                 ),
                 const SizedBox(height: 20),
@@ -172,7 +194,8 @@ class _AddInfoState extends State<AddInfo> {
                   title: 'Rental price',
                   text: _rentalPrice,
                   onTap: () {
-                    _editText(context, 'Rental price', _rentalPrice); // فتح حوار التحرير عند الضغط
+                    _editText(context, 'Rental price',
+                        _rentalPrice); // فتح حوار التحرير عند الضغط
                   },
                 ),
               ],
@@ -183,7 +206,10 @@ class _AddInfoState extends State<AddInfo> {
     );
   }
 
-  Widget buildContact({required String title, required String text, required VoidCallback onTap}) {
+  Widget buildContact(
+      {required String title,
+      required String text,
+      required VoidCallback onTap}) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
       child: Row(

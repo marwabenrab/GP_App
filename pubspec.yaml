@@ -35,6 +35,7 @@ dependencies:
   photo_view: ^0.15.0
   firebase_core: ^2.32.0
   path_provider: ^2.1.3
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -61,8 +62,7 @@ flutter:
   assets:
      - images/
      - assets/images/
-     - assets/ved.mp4
-     - assets/vd.mp4
+     - assets/
     
 
 

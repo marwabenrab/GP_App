@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:fikra_app/admin/pageone.dart';
 import 'package:fikra_app/auth/map_auth.dart';
 import 'package:fikra_app/config/static_values.dart';
@@ -11,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:fikra_app/constants.dart';
 
 class loginscreens extends StatefulWidget {
   static const String screenRoute = 'login_screens';
@@ -31,7 +33,7 @@ class _loginscreensState extends State<loginscreens> {
       return;
     }
 
-    var url = "https://192.168.1.6/falahphp/auth/login.php";
+    var url = "http://10.0.2.2:80/falahphp/auth/login.php";
 
     var response = await http.post(Uri.parse(url), body: {
       "flag": 2.toString(),
@@ -41,11 +43,13 @@ class _loginscreensState extends State<loginscreens> {
       "password": pass.text,
       'fcm_token': 'Notifications token',
     });
+    log(response.body);
     Map<String, dynamic> data = json.decode(response.body);
     if (data['status'] == 'success') {
       UserSessionController user = Get.find();
       user.isLocked = false.obs;
-
+      userData = data;
+      log(data.toString());
       if (data['user_type'] == 'farmer'.toString()) {
         print(data['id_Farmer']);
         user.idFarmer = int.parse(data['id_Farmer']);
@@ -67,7 +71,9 @@ class _loginscreensState extends State<loginscreens> {
       }
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool(StaticValues.isUserLoggedIn, true);
+      prefs.setString("pass", pass.text);
       prefs.setString('email', ema.text);
+      prefs.setString("date", DateTime.now().toString());
     } else {
       Get.snackbar('Alert', 'Login Failed, Try again');
     }

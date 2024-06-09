@@ -1,6 +1,10 @@
 //import 'dart:convert';
 
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:fikra_app/admin/page_add.dart';
+import 'package:fikra_app/constants.dart';
 import 'package:fikra_app/screens/myadv_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +19,7 @@ import '../screens/adv_secreens.dart';
 import '../screens/login_secreens.dart';
 import '../widgets/custbuttom.dart';
 import 'page_auth.dart';
+import 'package:http/http.dart' as http;
 
 class Mapauth extends StatefulWidget {
   static const String screenRoute = 'map_auth';
@@ -29,12 +34,33 @@ class _MapauthState extends State<Mapauth> {
   int selectedIndex = 0;
   SharedPreferences? prefs;
   Set<Marker> markers = {};
-
+  List<dynamic> _data = [];
   @override
   void initState() {
     super.initState();
+    _fetchData();
     _loadMarkers();
+
     _addInitialMarkers();
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      var url = "http://10.0.2.2:80/falahphp/auth/Get_land.php";
+      var response = await http.post(Uri.parse(url));
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _data = jsonDecode(response.body);
+          _loadMarkers();
+        });
+      } else {
+        log(response.body);
+        throw Exception('فشل في تحميل البيانات');
+      }
+    } catch (error) {
+      print(error);
+    }
   }
 
   Future<void> _loadMarkers() async {
@@ -44,17 +70,49 @@ class _MapauthState extends State<Mapauth> {
 
     if (lat != null && lng != null) {
       final Marker newMarker = Marker(
-        markerId: MarkerId('marker_id_${lng }'),
+        markerId: MarkerId('marker_id_${lng}'),
         position: LatLng(lat, lng),
         infoWindow: InfoWindow(title: 'New Marker', snippet: 'Added from list'),
-        onTap: () {
-            Navigator.pushNamed(context, PageAdd.screenRoute);
-        },
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
+        onTap: () {},
       );
 
       setState(() {
         markers.add(newMarker);
       });
+    }
+    log(_data.length.toString());
+    log(_data
+        .where(
+            (element) => element["approved"] == "1" || element["approved"] == 1)
+        .toList()
+        .toString());
+
+    for (var i in (_data
+        .where(
+            (element) => element["approved"] == "1" || element["approved"] == 1)
+        .toList())) {
+      if (i["coord_X"] != null && i["coord_Y"] != null) {
+        final Marker newMarker = Marker(
+          markerId: MarkerId('marker_id_${i["coord_X"]}'),
+          position:
+              LatLng(double.parse(i["coord_X"]), double.parse(i["coord_Y"])),
+          infoWindow:
+              InfoWindow(title: 'New Marker', snippet: 'Added from list'),
+          icon: i['status'] == 'Rent'
+              ? BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueYellow)
+              : BitmapDescriptor.defaultMarker,
+          onTap: () {
+            selectedLand = i;
+            Navigator.pushNamed(context, PageAdd.screenRoute);
+          },
+        );
+
+        setState(() {
+          markers.add(newMarker);
+        });
+      }
     }
   }
 
@@ -64,6 +122,7 @@ class _MapauthState extends State<Mapauth> {
       markerId: const MarkerId('marker_id_1'),
       position: const LatLng(36.27207921771714, 1.9698267053269236),
       infoWindow: const InfoWindow(title: 'benrabah marwa', snippet: 'للكراء'),
+      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueYellow),
       onTap: () {
         Navigator.pushNamed(context, Pageauth.screenRoute);
       },
@@ -83,24 +142,22 @@ class _MapauthState extends State<Mapauth> {
   }
 
   void _addNewMarker(LatLng position) {
-    final String markerIdVal = 'marker_id_${position.latitude}_${position.longitude}';
+    final String markerIdVal =
+        'marker_id_${position.latitude}_${position.longitude}';
     final MarkerId markerId = MarkerId(markerIdVal);
 
     final Marker newMarker = Marker(
-      markerId: markerId,
-      position: position,
-      infoWindow: InfoWindow(title: 'New Marker', snippet: 'Added from list'),
-      onTap: () {
+        markerId: markerId,
+        position: position,
+        infoWindow: InfoWindow(title: 'New Marker', snippet: 'Added from list'),
+        onTap: () {
           //Navigator.pushNamed(context, Pageauth.screenRoute);
-      }
-    );
+        });
 
     setState(() {
       markers.add(newMarker);
     });
-}
-
-
+  }
 
   Future<void> _showAdStatusDialog() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -320,4 +377,3 @@ class _MapauthState extends State<Mapauth> {
     );
   }
 }
-

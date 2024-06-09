@@ -27,9 +27,9 @@ class _Land_listState extends State<Land_list> {
   Future<void> _approvedLand(int index, int approved) async {
     try {
       UserSessionController user = Get.find();
-      var url = "https://192.168.1.6/falahphp/auth/Approved_land.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/Approved_land.php";
       var response = await http.post(Uri.parse(url),
-          body: {'idLand': _data[index]['id_land'], 'approved': '$approved'});
+          body: {'id_land': _data[index]['id_Land'], 'approved': '$approved'});
     } catch (error) {
       print(error);
     }
@@ -37,7 +37,7 @@ class _Land_listState extends State<Land_list> {
 
   Future<void> _fetchData() async {
     try {
-      var url = "https://192.168.1.6/falahphp/auth/Get_land.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/Get_land.php";
       var response = await http.post(Uri.parse(url));
 
       if (response.statusCode == 200) {
@@ -54,7 +54,7 @@ class _Land_listState extends State<Land_list> {
 
   Future<void> _deleteItemFromDatabase(int index) async {
     try {
-      var url = "https://192.168.1.6/falahphp/auth/Delet_land.php";
+      var url = "http://10.0.2.2:80/falahphp/auth/Delet_land.php";
       var response = await http.post(
         Uri.parse(url),
         body: {
@@ -144,7 +144,7 @@ class _Land_listState extends State<Land_list> {
             _approvedLand(index, 1);
             break;
           case 'مرفوض':
-            _approvedLand(index, 2);
+            _approvedLand(index, 0);
             break;
         }
       },
@@ -241,7 +241,7 @@ class _Land_listState extends State<Land_list> {
                           onPressed: () {
                             _showImage(
                                 context,
-                                "https://192.168.1.6/falahphp/auth/" +
+                                "http://10.0.2.2:80/falahphp/auth/" +
                                     data['image_own']);
                           },
                           style: ElevatedButton.styleFrom(
@@ -259,7 +259,7 @@ class _Land_listState extends State<Land_list> {
                           onPressed: () {
                             _showImage(
                                 context,
-                                "https://192.168.1.6/falahphp/auth/" +
+                                "http://10.0.2.2:80/falahphp/auth/" +
                                     data['image_payment']);
                           },
                           style: ElevatedButton.styleFrom(

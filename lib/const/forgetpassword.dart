@@ -71,7 +71,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
           CustButtom(
               text: 'Check'.tr,
               onPressed: () async {
-                var url = "https://192.168.1.6/falahphp/auth/password.php";
+                var url = "http://10.0.2.2:80/falahphp/auth/password.php";
                 var response = await http.post(Uri.parse(url), body: {
                   "email": widget.email,
                 });

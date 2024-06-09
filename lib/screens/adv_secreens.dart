@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
+import 'package:fikra_app/AppProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 import '../auth/map_auth.dart';
 import '../controllers/user_session_controller.dart';
 import '../widgets/custbuttom.dart';
@@ -84,18 +87,32 @@ class _AdvsecreensState extends State<Advsecreens> {
       Get.snackbar('Error'.tr, 'Please fill all fields and upload images'.tr);
       return;
     }
-    //https://192.168.1.6/falahphp//falahphp/auth
+    //http://10.0.2.2:80/falahphp//falahphp/auth
 
-    var url = 
-        "https://192.168.1.6/falahphp/auth/land.php";
+    var url = "http://10.0.2.2:80/falahphp/auth/land.php";
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['adress'] = adr.text;
     request.fields['phone'] = phone.text;
     request.fields['status'] = selectedStatus!;
+
     request.fields['coord_X'] =
-        markers.isNotEmpty ? markers.first.position.latitude.toString() : "";
+        Provider.of<AppProvider>(context, listen: false).markers.isNotEmpty
+            ? Provider.of<AppProvider>(context, listen: false)
+                .markers
+                .first
+                .position
+                .latitude
+                .toString()
+            : "";
     request.fields['coord_Y'] =
-        markers.isNotEmpty ? markers.first.position.longitude.toString() : "";
+        Provider.of<AppProvider>(context, listen: false).markers.isNotEmpty
+            ? Provider.of<AppProvider>(context, listen: false)
+                .markers
+                .first
+                .position
+                .longitude
+                .toString()
+            : "";
     UserSessionController user = Get.find();
     request.fields['idFrmer'] = user.idFarmer.toString();
 
@@ -160,18 +177,22 @@ class _AdvsecreensState extends State<Advsecreens> {
                 myLocationEnabled: true,
                 compassEnabled: true,
                 cameraTargetBounds: CameraTargetBounds.unbounded,
-                markers: markers,
-                onTap: (LatLng latLng) {
-                  // Add marker when tapping on the map
-                  markers.add(
-                    Marker(
-                      icon: BitmapDescriptor.defaultMarker,
-                      markerId: MarkerId(latLng.latitude.toString()),
-                      position: LatLng(latLng.latitude, latLng.longitude),
-                    ),
-                  );
-                  setState(() {});
-                },
+                markers: Provider.of<AppProvider>(context).markers,
+                // onTap: (LatLng latLng) {
+
+                //   setState(() {
+                //     log("message");
+                //     markers.clear();
+                //     markers.add(
+                //       Marker(
+                //         draggable: true,
+                //         icon: BitmapDescriptor.defaultMarker,
+                //         markerId: MarkerId(latLng.latitude.toString()),
+                //         position: LatLng(latLng.latitude, latLng.longitude),
+                //       ),
+                //     );
+                //   });
+                // },
               ),
             ),
           ),
@@ -431,7 +452,7 @@ class _AdvsecreensState extends State<Advsecreens> {
       return;
     }
 
-    var url = "https://192.168.1.6/falahphp/auth/land.php";
+    var url = "http://10.0.2.2:80/falahphp/auth/land.php";
     var request = http.MultipartRequest('POST', Uri.parse(url));
     request.fields['adress'] = adr.text;
     request.fields['phone'] = phone.text;
@@ -675,7 +696,7 @@ TextEditingController status = TextEditingController();
 
 Future registerLand(String? selectedStatus, File imageFile) async {
   print("hhhhhhhhhhhhhhhhhhh image: ${imageFile.path}");
-  var url = "https://192.168.1.6/falahphp/auth/land.php";
+  var url = "http://10.0.2.2:80/falahphp/auth/land.php";
   var http;
   var response = await http.post(
     Uri.parse(url),
